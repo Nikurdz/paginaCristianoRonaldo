@@ -1,0 +1,58 @@
+name: Deploy CR7 Tribute Site to GitHub Pages (CI/CD)
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # 1. ETAPA DE INTEGRACIÓN CONTINUA (CI) - Validación de Sintaxis
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar código fuente
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validar sintaxis JavaScript (CI)
+        run: |
+          node --check paginaCristianoRonaldo/script.js
+          node --check paginaCristianoRonaldo/observabilidad.js
+
+  # 2. ETAPA DE DESPLIEGUE CONTINUO (CD) - Publicación en GitHub Pages
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar código fuente
+        uses: actions/checkout@v4
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Empaquetar artefato estático (paginaCristianoRonaldo)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'paginaCristianoRonaldo'
+
+      - name: Publicar sitio en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

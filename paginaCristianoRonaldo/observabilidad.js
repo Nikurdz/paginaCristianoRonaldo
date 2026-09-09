@@ -30,8 +30,8 @@
     // ----------------------------------------------------------------------
     const loadFromStorage = () => {
         try {
-            if (typeof window.localStorage !== 'undefined') {
-                const stored = localStorage.getItem(STORAGE_KEY);
+            if (typeof window !== 'undefined' && 'localStorage' in window && window.localStorage) {
+                const stored = window.localStorage.getItem(STORAGE_KEY);
                 if (stored) {
                     const parsed = JSON.parse(stored);
                     if (parsed && Array.isArray(parsed.events)) {
@@ -40,20 +40,20 @@
                 }
             }
         } catch (err) {
-            console.warn('[Observabilidad CR7] No se pudo acceder a localStorage:', err);
+            // Silencioso en caso de bloqueo de cookies / modo privado restringido
         }
     };
 
     const saveToStorage = () => {
         try {
-            if (typeof window.localStorage !== 'undefined') {
+            if (typeof window !== 'undefined' && 'localStorage' in window && window.localStorage) {
                 if (observabilityData.events.length > MAX_EVENTS) {
                     observabilityData.events = observabilityData.events.slice(-MAX_EVENTS);
                 }
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(observabilityData));
+                window.localStorage.setItem(STORAGE_KEY, JSON.stringify(observabilityData));
             }
         } catch (err) {
-            console.warn('[Observabilidad CR7] Error guardando en localStorage:', err);
+            // Silencioso en caso de quota excedida o almacenamiento deshabilitado
         }
     };
 
@@ -68,7 +68,7 @@
             type: type,         // 'performance', 'error', 'interaction', 'visibility', 'system'
             category: category, // Subcategoría o nombre de evento
             details: details,   // Objeto con información detallada
-            pageUrl: window.location.pathname
+            pageUrl: (typeof window !== 'undefined' && window.location) ? window.location.pathname : '/'
         };
 
         observabilityData.events.unshift(eventEntry);
@@ -80,15 +80,15 @@
     // 3. Captura del Entorno y Soporte de APIs
     // ----------------------------------------------------------------------
     const captureEnvironment = () => {
-        const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        const conn = (typeof navigator !== 'undefined') ? (navigator.connection || navigator.mozConnection || navigator.webkitConnection) : null;
 
         observabilityData.environment = {
             viewport: {
-                width: window.innerWidth,
-                height: window.innerHeight,
-                screenWidth: window.screen ? window.screen.width : null,
-                screenHeight: window.screen ? window.screen.height : null,
-                devicePixelRatio: window.devicePixelRatio || 1
+                width: (typeof window !== 'undefined') ? window.innerWidth : 0,
+                height: (typeof window !== 'undefined') ? window.innerHeight : 0,
+                screenWidth: (typeof window !== 'undefined' && window.screen) ? window.screen.width : null,
+                screenHeight: (typeof window !== 'undefined' && window.screen) ? window.screen.height : null,
+                devicePixelRatio: (typeof window !== 'undefined' && window.devicePixelRatio) || 1
             },
             connection: conn ? {
                 effectiveType: conn.effectiveType || 'desconocido',
@@ -97,24 +97,25 @@
                 saveData: conn.saveData || false
             } : { effectiveType: 'no soportado' },
             apiSupport: {
-                performanceAPI: !!(window.performance && window.performance.timing),
-                performanceObserver: typeof window.PerformanceObserver !== 'undefined',
-                intersectionObserver: typeof window.IntersectionObserver !== 'undefined',
+                performanceAPI: !!(typeof window !== 'undefined' && window.performance && window.performance.timing),
+                performanceObserver: typeof window !== 'undefined' && typeof window.PerformanceObserver !== 'undefined',
+                intersectionObserver: typeof window !== 'undefined' && typeof window.IntersectionObserver !== 'undefined',
                 localStorage: (() => {
                     try {
+                        if (typeof window === 'undefined' || !('localStorage' in window) || !window.localStorage) return false;
                         const testKey = '__test_ls__';
-                        localStorage.setItem(testKey, testKey);
-                        localStorage.removeItem(testKey);
+                        window.localStorage.setItem(testKey, testKey);
+                        window.localStorage.removeItem(testKey);
                         return true;
                     } catch (e) {
                         return false;
                     }
                 })(),
-                matchMedia: typeof window.matchMedia !== 'undefined',
-                serviceWorker: 'serviceWorker' in navigator
+                matchMedia: typeof window !== 'undefined' && typeof window.matchMedia !== 'undefined',
+                serviceWorker: (typeof navigator !== 'undefined') && ('serviceWorker' in navigator)
             },
-            userAgent: navigator.userAgent,
-            language: navigator.language || 'es'
+            userAgent: (typeof navigator !== 'undefined') ? navigator.userAgent : 'Desconocido',
+            language: (typeof navigator !== 'undefined') ? (navigator.language || 'es') : 'es'
         };
     };
 
@@ -122,7 +123,7 @@
     // 4. Captura de Rendimiento (Performance API)
     // ----------------------------------------------------------------------
     const capturePerformance = () => {
-        if (!window.performance) return;
+        if (typeof window === 'undefined' || !window.performance) return;
 
         window.addEventListener('load', () => {
             setTimeout(() => {
@@ -171,6 +172,8 @@
     // 5. Captura de Errores JavaScript y Promesas Rechazadas
     // ----------------------------------------------------------------------
     const setupErrorTracking = () => {
+        if (typeof window === 'undefined') return;
+
         window.addEventListener('error', (event) => {
             if (event.target && (event.target.tagName === 'IMG' || event.target.tagName === 'SCRIPT' || event.target.tagName === 'LINK')) {
                 logEvent('error', 'Recurso Fallido', {
@@ -201,8 +204,10 @@
     // 6. Captura de Clics e Interacciones de Usuario
     // ----------------------------------------------------------------------
     const setupInteractionTracking = () => {
+        if (typeof document === 'undefined') return;
+
         document.addEventListener('click', (event) => {
-            const target = event.target.closest('a, button, input, summary, [role="button"], [role="tab"]');
+            const target = event.target.closest('a, button, input, summary, figure, .galeria-item, [role="button"], [role="tab"]');
             if (!target) return;
 
             const labelText = (target.textContent || target.getAttribute('aria-label') || target.value || target.alt || 'Sin etiqueta').trim().substring(0, 50);
@@ -222,6 +227,8 @@
     // 7. Captura de Cambios de Visibilidad de Pestaña
     // ----------------------------------------------------------------------
     const setupVisibilityTracking = () => {
+        if (typeof document === 'undefined') return;
+
         document.addEventListener('visibilitychange', () => {
             const state = document.visibilityState;
             logEvent('visibility', 'Cambio de Estado', {
@@ -242,217 +249,237 @@
     setupVisibilityTracking();
 
     logEvent('system', 'Sesión Iniciada', {
-        url: window.location.pathname,
-        viewportWidth: window.innerWidth
+        url: (typeof window !== 'undefined' && window.location) ? window.location.pathname : '/',
+        viewportWidth: (typeof window !== 'undefined') ? window.innerWidth : 0
     });
 
     // ----------------------------------------------------------------------
     // 9. API Pública Global window.CR7Observability
     // ----------------------------------------------------------------------
-    window.CR7Observability = {
-        getSnapshot: () => {
-            captureEnvironment();
-            return JSON.parse(JSON.stringify(observabilityData));
-        },
-        logEvent: (type, category, details) => {
-            return logEvent(type, category, details);
-        },
-        clearStorage: () => {
-            observabilityData.events = [];
-            try {
-                if (typeof window.localStorage !== 'undefined') {
-                    localStorage.removeItem(STORAGE_KEY);
+    if (typeof window !== 'undefined') {
+        window.CR7Observability = {
+            getSnapshot: () => {
+                captureEnvironment();
+                return JSON.parse(JSON.stringify(observabilityData));
+            },
+            logEvent: (type, category, details) => {
+                return logEvent(type, category, details);
+            },
+            clearStorage: () => {
+                observabilityData.events = [];
+                try {
+                    if (typeof window !== 'undefined' && 'localStorage' in window && window.localStorage) {
+                        window.localStorage.removeItem(STORAGE_KEY);
+                    }
+                } catch (e) {
+                    console.warn('[Observabilidad CR7] No se pudo limpiar localStorage:', e);
                 }
-            } catch (e) {
-                console.warn('[Observabilidad CR7] No se pudo limpiar localStorage:', e);
+                logEvent('system', 'Almacenamiento Limpiado', { timestamp: new Date().toISOString() });
+            },
+            exportJSON: () => {
+                const snapshot = window.CR7Observability.getSnapshot();
+                const jsonString = JSON.stringify(snapshot, null, 2);
+                const downloadAnchor = document.createElement('a');
+                let blobUrl = null;
+
+                if (typeof Blob !== 'undefined' && typeof URL !== 'undefined' && URL.createObjectURL) {
+                    const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
+                    blobUrl = URL.createObjectURL(blob);
+                    downloadAnchor.setAttribute("href", blobUrl);
+                } else {
+                    downloadAnchor.setAttribute("href", "data:text/json;charset=utf-8," + encodeURIComponent(jsonString));
+                }
+
+                downloadAnchor.setAttribute("download", `cr7-observability-snapshot-${Date.now()}.json`);
+                if (document.body) {
+                    document.body.appendChild(downloadAnchor);
+                }
+                downloadAnchor.click();
+                if (downloadAnchor.remove) {
+                    downloadAnchor.remove();
+                }
+                if (blobUrl) {
+                    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+                }
+            },
+            generateDemoEvent: () => {
+                const demoTypes = [
+                    { type: 'interaction', cat: 'Filtro Aplicado', details: { filter: 'Real Madrid', target: 'filter-btn' } },
+                    { type: 'interaction', cat: 'Clic en Galería', details: { action: 'Ampliar imagen', image: 'cr7_real_madrid.jpg' } },
+                    { type: 'error', cat: 'Demostración de Error', details: { message: 'Simulación de error de prueba para dashboard', code: 'ERR_DEMO_TEST' } },
+                    { type: 'performance', cat: 'Métrica de Demostración', details: { renderTimeMs: 142, fps: 60 } },
+                    { type: 'visibility', cat: 'Cambio Simulado', details: { visibilityState: 'hidden' } }
+                ];
+                const randomDemo = demoTypes[Math.floor(Math.random() * demoTypes.length)];
+                return logEvent(randomDemo.type, randomDemo.cat, randomDemo.details);
             }
-            logEvent('system', 'Almacenamiento Limpiado', { timestamp: new Date().toISOString() });
-        },
-        exportJSON: () => {
-            const snapshot = window.CR7Observability.getSnapshot();
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(snapshot, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `cr7-observability-snapshot-${Date.now()}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        },
-        generateDemoEvent: () => {
-            const demoTypes = [
-                { type: 'interaction', cat: 'Filtro Aplicado', details: { filter: 'Real Madrid', target: 'filter-btn' } },
-                { type: 'error', cat: 'Demostración de Error', details: { message: 'Simulación de error de prueba para dashboard', code: 'ERR_DEMO_TEST' } },
-                { type: 'performance', cat: 'Métrica de Demostración', details: { renderTimeMs: 142, fps: 60 } },
-                { type: 'visibility', cat: 'Cambio Simulado', details: { visibilityState: 'hidden' } }
-            ];
-            const randomDemo = demoTypes[Math.floor(Math.random() * demoTypes.length)];
-            return logEvent(randomDemo.type, randomDemo.cat, randomDemo.details);
-        }
-    };
+        };
+    }
 
     // ----------------------------------------------------------------------
     // 10. Controlador e Interfaz del Dashboard (observabilidad.html)
     // ----------------------------------------------------------------------
-    document.addEventListener('DOMContentLoaded', () => {
-        const btnRefresh = document.getElementById('btnRefresh');
-        const btnDemoEvent = document.getElementById('btnDemoEvent');
-        const btnDownloadJson = document.getElementById('btnDownloadJson');
-        const btnClearStorage = document.getElementById('btnClearStorage');
-        const filterEventType = document.getElementById('filterEventType');
-        const searchLog = document.getElementById('searchLog');
-        const statusNotification = document.getElementById('statusNotification');
+    if (typeof document !== 'undefined') {
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnRefresh = document.getElementById('btnRefresh');
+            const btnDemoEvent = document.getElementById('btnDemoEvent');
+            const btnDownloadJson = document.getElementById('btnDownloadJson');
+            const btnClearStorage = document.getElementById('btnClearStorage');
+            const filterEventType = document.getElementById('filterEventType');
+            const searchLog = document.getElementById('searchLog');
+            const statusNotification = document.getElementById('statusNotification');
 
-        // Si no estamos en la página del dashboard, finalizar silenciosamente
-        if (!btnRefresh || !document.getElementById('logsTableBody')) return;
+            if (!btnRefresh || !document.getElementById('logsTableBody')) return;
 
-        const showNotification = (msg) => {
-            if (statusNotification) {
-                statusNotification.textContent = '✓ ' + msg;
-                setTimeout(() => {
-                    if (statusNotification.textContent === '✓ ' + msg) {
-                        statusNotification.textContent = '';
-                    }
-                }, 3000);
-            }
-        };
+            const showNotification = (msg) => {
+                if (statusNotification) {
+                    statusNotification.textContent = '✓ ' + msg;
+                    setTimeout(() => {
+                        if (statusNotification.textContent === '✓ ' + msg) {
+                            statusNotification.textContent = '';
+                        }
+                    }, 3000);
+                }
+            };
 
-        const renderDashboardUI = () => {
-            const snapshot = window.CR7Observability.getSnapshot();
-            const events = snapshot.events || [];
+            const renderDashboardUI = () => {
+                const snapshot = window.CR7Observability.getSnapshot();
+                const events = snapshot.events || [];
 
-            // 1. Resumen Estadístico
-            const statTotalEvents = document.getElementById('statTotalEvents');
-            const statTotalErrors = document.getElementById('statTotalErrors');
-            const statTotalClicks = document.getElementById('statTotalClicks');
-            const statLoadTime = document.getElementById('statLoadTime');
+                // 1. Resumen Estadístico
+                const statTotalEvents = document.getElementById('statTotalEvents');
+                const statTotalErrors = document.getElementById('statTotalErrors');
+                const statTotalClicks = document.getElementById('statTotalClicks');
+                const statLoadTime = document.getElementById('statLoadTime');
 
-            const errorEvents = events.filter(e => e.type === 'error');
-            const clickEvents = events.filter(e => e.type === 'interaction');
+                const errorEvents = events.filter(e => e.type === 'error');
+                const clickEvents = events.filter(e => e.type === 'interaction');
 
-            if (statTotalEvents) statTotalEvents.textContent = events.length;
-            if (statTotalErrors) statTotalErrors.textContent = errorEvents.length;
-            if (statTotalClicks) statTotalClicks.textContent = clickEvents.length;
+                if (statTotalEvents) statTotalEvents.textContent = events.length;
+                if (statTotalErrors) statTotalErrors.textContent = errorEvents.length;
+                if (statTotalClicks) statTotalClicks.textContent = clickEvents.length;
 
-            const perfLoad = snapshot.performance ? snapshot.performance.loadTimeMs : null;
-            if (statLoadTime) statLoadTime.textContent = (typeof perfLoad === 'number' && perfLoad > 0) ? perfLoad + ' ms' : 'Inmediato';
+                const perfLoad = snapshot.performance ? snapshot.performance.loadTimeMs : null;
+                if (statLoadTime) statLoadTime.textContent = (typeof perfLoad === 'number' && perfLoad > 0) ? perfLoad + ' ms' : 'Inmediato';
 
-            // 2. Métricas de Rendimiento
-            const metricLoadTime = document.getElementById('metricLoadTime');
-            const metricDomReady = document.getElementById('metricDomReady');
-            const metricTtfb = document.getElementById('metricTtfb');
-            const metricNavType = document.getElementById('metricNavType');
+                // 2. Métricas de Rendimiento
+                const metricLoadTime = document.getElementById('metricLoadTime');
+                const metricDomReady = document.getElementById('metricDomReady');
+                const metricTtfb = document.getElementById('metricTtfb');
+                const metricNavType = document.getElementById('metricNavType');
 
-            if (metricLoadTime) metricLoadTime.textContent = (typeof perfLoad === 'number' && perfLoad > 0) ? perfLoad + ' ms' : '35 ms (Caché local)';
-            if (metricDomReady) metricDomReady.textContent = snapshot.performance.domReadyMs ? snapshot.performance.domReadyMs + ' ms' : '20 ms';
-            if (metricTtfb) metricTtfb.textContent = snapshot.performance.ttfbMs ? snapshot.performance.ttfbMs + ' ms' : '8 ms';
-            if (metricNavType) metricNavType.textContent = snapshot.performance.navigationType || 'navigate';
+                if (metricLoadTime) metricLoadTime.textContent = (typeof perfLoad === 'number' && perfLoad > 0) ? perfLoad + ' ms' : '35 ms (Caché local)';
+                if (metricDomReady) metricDomReady.textContent = snapshot.performance.domReadyMs ? snapshot.performance.domReadyMs + ' ms' : '20 ms';
+                if (metricTtfb) metricTtfb.textContent = snapshot.performance.ttfbMs ? snapshot.performance.ttfbMs + ' ms' : '8 ms';
+                if (metricNavType) metricNavType.textContent = snapshot.performance.navigationType || 'navigate';
 
-            // 3. Entorno y APIs
-            const envViewport = document.getElementById('envViewport');
-            const envConnection = document.getElementById('envConnection');
-            const envUserAgent = document.getElementById('envUserAgent');
-            const apiChecklist = document.getElementById('apiChecklist');
+                // 3. Entorno y APIs
+                const envViewport = document.getElementById('envViewport');
+                const envConnection = document.getElementById('envConnection');
+                const envUserAgent = document.getElementById('envUserAgent');
+                const apiChecklist = document.getElementById('apiChecklist');
 
-            const env = snapshot.environment || {};
-            if (envViewport && env.viewport) {
-                envViewport.textContent = `${env.viewport.width}px x ${env.viewport.height}px (DPR: ${env.viewport.devicePixelRatio})`;
-            }
-            if (envConnection && env.connection) {
-                envConnection.textContent = `${env.connection.effectiveType} ${env.connection.downlink ? '(' + env.connection.downlink + ')' : ''}`;
-            }
-            if (envUserAgent) envUserAgent.textContent = env.userAgent || navigator.userAgent;
+                const env = snapshot.environment || {};
+                if (envViewport && env.viewport) {
+                    envViewport.textContent = `${env.viewport.width}px x ${env.viewport.height}px (DPR: ${env.viewport.devicePixelRatio})`;
+                }
+                if (envConnection && env.connection) {
+                    envConnection.textContent = env.connection.effectiveType === 'no soportado'
+                        ? 'No soportado'
+                        : `${env.connection.effectiveType} ${env.connection.downlink ? '(' + env.connection.downlink + ')' : ''}`;
+                }
+                if (envUserAgent) envUserAgent.textContent = env.userAgent || (typeof navigator !== 'undefined' ? navigator.userAgent : 'Desconocido');
 
-            if (apiChecklist && env.apiSupport) {
-                const apis = [
-                    { name: 'Performance API', supported: env.apiSupport.performanceAPI },
-                    { name: 'PerformanceObserver', supported: env.apiSupport.performanceObserver },
-                    { name: 'IntersectionObserver', supported: env.apiSupport.intersectionObserver },
-                    { name: 'localStorage', supported: env.apiSupport.localStorage },
-                    { name: 'matchMedia (CSS)', supported: env.apiSupport.matchMedia },
-                    { name: 'Service Worker', supported: env.apiSupport.serviceWorker }
-                ];
+                if (apiChecklist && env.apiSupport) {
+                    const apis = [
+                        { name: 'Performance API', supported: env.apiSupport.performanceAPI },
+                        { name: 'PerformanceObserver', supported: env.apiSupport.performanceObserver },
+                        { name: 'IntersectionObserver', supported: env.apiSupport.intersectionObserver },
+                        { name: 'localStorage', supported: env.apiSupport.localStorage },
+                        { name: 'matchMedia (CSS)', supported: env.apiSupport.matchMedia },
+                        { name: 'Service Worker', supported: env.apiSupport.serviceWorker }
+                    ];
 
-                apiChecklist.innerHTML = apis.map(api => `
-                    <li class="api-item">
-                        <span>${api.name}</span>
-                        <span class="badge-status ${api.supported ? 'supported' : 'unsupported'}">
-                            ${api.supported ? 'Soportado' : 'No Soportado'}
-                        </span>
-                    </li>
-                `).join('');
-            }
-
-            // 4. Render de Tabla de Registros (Logs)
-            const logsTableBody = document.getElementById('logsTableBody');
-            const selectedType = filterEventType ? filterEventType.value : 'all';
-            const searchQuery = searchLog ? searchLog.value.toLowerCase().trim() : '';
-
-            let filteredEvents = events.filter(evt => {
-                const matchType = (selectedType === 'all' || evt.type === selectedType);
-                const detailsString = JSON.stringify(evt.details || {}).toLowerCase();
-                const categoryString = (evt.category || '').toLowerCase();
-                const matchSearch = !searchQuery || categoryString.includes(searchQuery) || detailsString.includes(searchQuery);
-                return matchType && matchSearch;
-            });
-
-            if (logsTableBody) {
-                if (filteredEvents.length === 0) {
-                    logsTableBody.innerHTML = `
-                        <tr>
-                            <td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 2rem;">
-                                No hay eventos registrados que coincidan con el filtro actual.
-                            </td>
-                        </tr>
-                    `;
-                } else {
-                    logsTableBody.innerHTML = filteredEvents.map(evt => `
-                        <tr>
-                            <td><strong>${evt.timeFormatted || ''}</strong></td>
-                            <td><span class="event-badge ${evt.type}">${evt.type}</span></td>
-                            <td>${evt.category || ''}</td>
-                            <td><div class="details-box">${JSON.stringify(evt.details, null, 1)}</div></td>
-                            <td><span class="code-text">${evt.pageUrl || '/'}</span></td>
-                        </tr>
+                    apiChecklist.innerHTML = apis.map(api => `
+                        <li class="api-item">
+                            <span>${api.name}</span>
+                            <span class="badge-status ${api.supported ? 'supported' : 'unsupported'}">
+                                ${api.supported ? 'Soportado' : 'No Soportado'}
+                            </span>
+                        </li>
                     `).join('');
                 }
-            }
-        };
 
-        // Escuchadores de eventos de la barra de acciones
-        btnRefresh.addEventListener('click', () => {
-            renderDashboardUI();
-            showNotification('Datos de observabilidad actualizados.');
-        });
+                // 4. Render de Tabla de Registros (Logs)
+                const logsTableBody = document.getElementById('logsTableBody');
+                const selectedType = filterEventType ? filterEventType.value : 'all';
+                const searchQuery = searchLog ? searchLog.value.toLowerCase().trim() : '';
 
-        if (btnDemoEvent) {
-            btnDemoEvent.addEventListener('click', () => {
-                window.CR7Observability.generateDemoEvent();
-                renderDashboardUI();
-                showNotification('Evento de prueba generado y registrado.');
-            });
-        }
+                let filteredEvents = events.filter(evt => {
+                    const matchType = (selectedType === 'all' || evt.type === selectedType);
+                    const detailsString = JSON.stringify(evt.details || {}).toLowerCase();
+                    const categoryString = (evt.category || '').toLowerCase();
+                    const matchSearch = !searchQuery || categoryString.includes(searchQuery) || detailsString.includes(searchQuery);
+                    return matchType && matchSearch;
+                });
 
-        if (btnDownloadJson) {
-            btnDownloadJson.addEventListener('click', () => {
-                window.CR7Observability.exportJSON();
-                showNotification('Snapshot JSON descargado correctamente.');
-            });
-        }
-
-        if (btnClearStorage) {
-            btnClearStorage.addEventListener('click', () => {
-                if (confirm('¿Estás seguro de que deseas borrar todo el historial de observabilidad local?')) {
-                    window.CR7Observability.clearStorage();
-                    renderDashboardUI();
-                    showNotification('Almacenamiento de observabilidad limpiado.');
+                if (logsTableBody) {
+                    if (filteredEvents.length === 0) {
+                        logsTableBody.innerHTML = `
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 2rem;">
+                                    No hay eventos registrados que coincidan con el filtro actual.
+                                </td>
+                            </tr>
+                        `;
+                    } else {
+                        logsTableBody.innerHTML = filteredEvents.map(evt => `
+                            <tr>
+                                <td><strong>${evt.timeFormatted || ''}</strong></td>
+                                <td><span class="event-badge ${evt.type}">${evt.type}</span></td>
+                                <td>${evt.category || ''}</td>
+                                <td><div class="details-box">${JSON.stringify(evt.details, null, 1)}</div></td>
+                                <td><span class="code-text">${evt.pageUrl || '/'}</span></td>
+                            </tr>
+                        `).join('');
+                    }
                 }
+            };
+
+            btnRefresh.addEventListener('click', () => {
+                renderDashboardUI();
+                showNotification('Datos de observabilidad actualizados.');
             });
-        }
 
-        if (filterEventType) filterEventType.addEventListener('change', renderDashboardUI);
-        if (searchLog) searchLog.addEventListener('input', renderDashboardUI);
+            if (btnDemoEvent) {
+                btnDemoEvent.addEventListener('click', () => {
+                    window.CR7Observability.generateDemoEvent();
+                    renderDashboardUI();
+                    showNotification('Evento de prueba generado y registrado.');
+                });
+            }
 
-        // Renderizado inicial
-        renderDashboardUI();
-    });
+            if (btnDownloadJson) {
+                btnDownloadJson.addEventListener('click', () => {
+                    window.CR7Observability.exportJSON();
+                    showNotification('Snapshot JSON descargado correctamente.');
+                });
+            }
+
+            if (btnClearStorage) {
+                btnClearStorage.addEventListener('click', () => {
+                    if (typeof window.confirm === 'function' ? window.confirm('¿Estás seguro de que deseas borrar todo el historial de observabilidad local?') : true) {
+                        window.CR7Observability.clearStorage();
+                        renderDashboardUI();
+                        showNotification('Almacenamiento de observabilidad limpiado.');
+                    }
+                });
+            }
+
+            if (filterEventType) filterEventType.addEventListener('change', renderDashboardUI);
+            if (searchLog) searchLog.addEventListener('input', renderDashboardUI);
+
+            renderDashboardUI();
+        });
+    }
 })();

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dashboard de Observabilidad Local en tiempo real para el sitio tributo a Cristiano Ronaldo (CR7). Análisis de rendimiento, errores, interacciones y soporte de APIs sin backend.">
+    <meta name="author" content="Docente & Desarrollador Web Senior">
+    <title>Dashboard de Observabilidad Local | CR7 Legend</title>
+
+    <!-- Tipografía Google Fonts: Outfit & Cinzel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="observabilidad.css">
+</head>
+<body>
+    <!-- Enlace directo para accesibilidad -->
+    <a href="#main-dashboard" class="skip-link">Saltar al contenido del Dashboard</a>
+
+    <!-- Encabezado y Navegación del Dashboard -->
+    <header class="header" id="header">
+        <div class="header-container">
+            <a href="index.html" class="logo" aria-label="Volver al Inicio - CR7 Legend">
+                <span class="logo-text">CR<span class="highlight">7</span></span>
+                <span class="logo-subtext">OBSERVABILITY</span>
+            </a>
+
+            <nav class="nav" aria-label="Navegación del dashboard">
+                <ul class="nav-list">
+                    <li><a href="index.html" class="nav-link">← Volver al Sitio Principal</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-dashboard" class="dashboard-main container">
+        <!-- Título y Descripción -->
+        <div class="dashboard-header">
+            <span class="section-tag">Telemetría y Diagnóstico Local</span>
+            <h1 class="dashboard-title">Dashboard de Observabilidad</h1>
+            <div class="title-line"></div>
+            <p class="dashboard-subtitle">Monitor de rendimiento, errores JavaScript, interacciones de usuario y compatibilidad de APIs almacenado exclusivamente en el navegador local (`localStorage`).</p>
+        </div>
+
+        <!-- Tarjetas de Resumen Ejecutivo -->
+        <section class="summary-cards" aria-label="Resumen ejecutivo de métricas">
+            <div class="summary-card">
+                <div class="card-icon" aria-hidden="true">📊</div>
+                <div class="card-info">
+                    <span class="card-label">Eventos Totales</span>
+                    <span class="card-value" id="statTotalEvents">0</span>
+                </div>
+            </div>
+
+            <div class="summary-card danger">
+                <div class="card-icon" aria-hidden="true">⚠️</div>
+                <div class="card-info">
+                    <span class="card-label">Errores Registrados</span>
+                    <span class="card-value" id="statTotalErrors">0</span>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="card-icon" aria-hidden="true">👆</div>
+                <div class="card-info">
+                    <span class="card-label">Clics de Usuario</span>
+                    <span class="card-value" id="statTotalClicks">0</span>
+                </div>
+            </div>
+
+            <div class="summary-card gold">
+                <div class="card-icon" aria-hidden="true">⚡</div>
+                <div class="card-info">
+                    <span class="card-label">Tiempo de Carga</span>
+                    <span class="card-value" id="statLoadTime">0 ms</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Barra de Acciones y Controles del Dashboard -->
+        <section class="dashboard-actions-section" aria-label="Controles del sistema">
+            <div class="actions-group">
+                <button id="btnRefresh" class="btn btn-primary" aria-label="Actualizar datos de observabilidad">
+                    <span aria-hidden="true">🔄</span> Actualizar Datos
+                </button>
+
+                <button id="btnDemoEvent" class="btn btn-secondary" aria-label="Generar evento de demostración">
+                    <span aria-hidden="true">⚡</span> Generar Evento de Prueba
+                </button>
+
+                <button id="btnDownloadJson" class="btn btn-secondary" aria-label="Descargar snapshot de observabilidad en formato JSON">
+                    <span aria-hidden="true">📥</span> Descargar Snapshot JSON
+                </button>
+
+                <button id="btnClearStorage" class="btn btn-danger" aria-label="Limpiar todo el almacenamiento local de observabilidad">
+                    <span aria-hidden="true">🗑️</span> Limpiar Almacenamiento
+                </button>
+            </div>
+            <div id="statusNotification" class="status-notification" role="status" aria-live="polite"></div>
+        </section>
+
+        <!-- Grilla Principal de Diagnóstico -->
+        <div class="dashboard-grid">
+            <!-- Panel Rendimiento de Navegación -->
+            <section class="panel-card" aria-labelledby="headingPerf">
+                <h2 id="headingPerf" class="panel-title">
+                    <span aria-hidden="true">⏱️</span> Rendimiento de Navegación
+                </h2>
+                <div class="panel-body">
+                    <ul class="metrics-list" id="perfMetricsList">
+                        <li><span>Tiempo Total de Carga:</span> <strong id="metricLoadTime">Procesando...</strong></li>
+                        <li><span>DOM Content Loaded:</span> <strong id="metricDomReady">Procesando...</strong></li>
+                        <li><span>Time to First Byte (TTFB):</span> <strong id="metricTtfb">Procesando...</strong></li>
+                        <li><span>Tipo de Navegación:</span> <strong id="metricNavType">navigate</strong></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Panel Entorno y APIs -->
+            <section class="panel-card" aria-labelledby="headingEnv">
+                <h2 id="headingEnv" class="panel-title">
+                    <span aria-hidden="true">💻</span> Entorno y Soporte de APIs
+                </h2>
+                <div class="panel-body">
+                    <div class="env-info">
+                        <p><strong>Viewport:</strong> <span id="envViewport">-</span></p>
+                        <p><strong>Conexión Estimada:</strong> <span id="envConnection">-</span></p>
+                        <p><strong>User Agent:</strong> <span id="envUserAgent" class="code-text">-</span></p>
+                    </div>
+                    <h3 class="sub-panel-title">Soporte de APIs en Navegador:</h3>
+                    <ul class="api-checklist" id="apiChecklist">
+                        <!-- Generado dinámicamente por JS -->
+                    </ul>
+                </div>
+            </section>
+        </div>
+
+        <!-- Registro Detallado de Eventos (Event Logs) -->
+        <section class="panel-card logs-panel" aria-labelledby="headingLogs">
+            <div class="logs-header">
+                <h2 id="headingLogs" class="panel-title">
+                    <span aria-hidden="true">📋</span> Registro de Eventos en Tiempo Real
+                </h2>
+
+                <div class="logs-filters">
+                    <div class="filter-control">
+                        <label for="filterEventType" class="sr-only">Filtrar por Tipo de Evento</label>
+                        <select id="filterEventType" class="select-control">
+                            <option value="all">Todos los Tipos</option>
+                            <option value="interaction">Clics e Interacciones</option>
+                            <option value="error">Errores de JS / Recursos</option>
+                            <option value="performance">Métricas de Rendimiento</option>
+                            <option value="visibility">Cambios de Visibilidad</option>
+                            <option value="system">Sistema y Sesión</option>
+                        </select>
+                    </div>
+
+                    <div class="search-control">
+                        <label for="searchLog" class="sr-only">Buscar en los eventos</label>
+                        <input type="search" id="searchLog" class="input-control" placeholder="Buscar por categoría o mensaje...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="logs-table" aria-label="Tabla de eventos registrados localmente">
+                    <thead>
+                        <tr>
+                            <th scope="col">Hora</th>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Categoría</th>
+                            <th scope="col">Detalles</th>
+                            <th scope="col">Página</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTableBody">
+                        <!-- Renderizado dinámicamente por JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Pie de Página -->
+    <footer class="footer">
+        <div class="container footer-bottom">
+            <p>&copy; 2026 CR7 Tribute. Módulo de Observabilidad Local estático sin dependencias externas.</p>
+        </div>
+    </footer>
+
+    <script src="observabilidad.js"></script>
+</body>
+</html>

@@ -1,0 +1,350 @@
+/* ==========================================================================
+   CRISTIANO RONALDO - ESTILOS DEL DASHBOARD DE OBSERVABILIDAD LOCAL
+   Extiende el sistema de diseño principal de styles.css
+   ========================================================================== */
+
+.dashboard-main {
+    padding-top: 7rem;
+    padding-bottom: 5rem;
+}
+
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.dashboard-title {
+    font-family: var(--font-heading);
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    font-weight: 800;
+}
+
+.dashboard-subtitle {
+    color: var(--text-secondary);
+    max-width: 750px;
+    margin: 1.2rem auto 0;
+    font-size: 1.05rem;
+}
+
+/* ==========================================================================
+   TARJETAS DE RESUMEN EJECUTIVO
+   ========================================================================== */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.summary-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    transition: var(--transition-fast);
+}
+
+.summary-card:hover {
+    border-color: var(--border-gold);
+    transform: translateY(-3px);
+}
+
+.summary-card.gold {
+    border-color: var(--border-gold);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, var(--bg-card) 100%);
+}
+
+.summary-card.danger {
+    border-color: rgba(230, 0, 38, 0.4);
+    background: linear-gradient(135deg, rgba(230, 0, 38, 0.08) 0%, var(--bg-card) 100%);
+}
+
+.card-icon {
+    font-size: 2.2rem;
+    line-height: 1;
+}
+
+.card-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.card-value {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.summary-card.gold .card-value {
+    color: var(--gold-primary);
+}
+
+.summary-card.danger .card-value {
+    color: #ff4d6d;
+}
+
+/* ==========================================================================
+   BARRA DE ACCIONES Y NOTIFICACIONES
+   ========================================================================== */
+.dashboard-actions-section {
+    margin-bottom: 3rem;
+}
+
+.actions-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.btn-danger {
+    background: rgba(230, 0, 38, 0.2);
+    color: #ff4d6d;
+    border: 1px solid rgba(230, 0, 38, 0.4);
+}
+
+.btn-danger:hover {
+    background: #e60026;
+    color: #fff;
+}
+
+.status-notification {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: var(--gold-primary);
+    min-height: 1.5rem;
+}
+
+/* ==========================================================================
+   PANELD GRID (RENDIMIENTO Y ENTORNO)
+   ========================================================================== */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.panel-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.panel-title {
+    font-size: 1.3rem;
+    color: var(--gold-primary);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.8rem;
+}
+
+.metrics-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.metrics-list li strong {
+    color: var(--text-primary);
+}
+
+.env-info p {
+    margin-bottom: 0.6rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.env-info p strong {
+    color: var(--text-primary);
+}
+
+.code-text {
+    font-family: monospace;
+    font-size: 0.82rem;
+    color: var(--gold-light);
+    word-break: break-all;
+}
+
+.sub-panel-title {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin: 1.5rem 0 1rem;
+}
+
+.api-checklist {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 0.8rem;
+}
+
+.api-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.badge-status {
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.badge-status.supported {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.badge-status.unsupported {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* ==========================================================================
+   REGISTRO DE EVENTOS (LOGS TABLE)
+   ========================================================================== */
+.logs-panel {
+    grid-column: 1 / -1;
+}
+
+.logs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1.8rem;
+}
+
+.logs-filters {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.select-control,
+.input-control {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    font-family: var(--font-body);
+    min-height: 44px;
+}
+
+.select-control:focus-visible,
+.input-control:focus-visible {
+    border-color: var(--gold-primary);
+    outline: 2px solid var(--gold-primary);
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.logs-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.logs-table th {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--gold-primary);
+    padding: 1rem;
+    border-bottom: 2px solid var(--border-color);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+.logs-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    vertical-align: top;
+}
+
+.logs-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.event-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.event-badge.interaction { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+.event-badge.error { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+.event-badge.performance { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); }
+.event-badge.visibility { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+.event-badge.system { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+
+/* Details formatting */
+.details-box {
+    font-family: monospace;
+    font-size: 0.82rem;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    max-width: 400px;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* Responsive queries for dashboard */
+@media (max-width: 768px) {
+    .logs-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .logs-filters {
+        flex-direction: column;
+    }
+
+    .actions-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .actions-group .btn {
+        width: 100%;
+    }
+}

@@ -1,0 +1,138 @@
+.form-page {
+    padding-top: 8rem;
+    padding-bottom: 5rem;
+}
+
+.form-intro {
+    max-width: 720px;
+    margin: 0 auto 2rem;
+    text-align: center;
+}
+
+.form-intro p {
+    color: var(--text-secondary);
+    margin-top: 1.25rem;
+}
+
+.accessible-form {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: clamp(1.25rem, 4vw, 2.5rem);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.form-field,
+.form-fieldset {
+    margin-bottom: 1.5rem;
+}
+
+.form-field label,
+.form-fieldset legend {
+    display: block;
+    color: var(--text-primary);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.form-field input,
+.form-field textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    font: inherit;
+}
+
+.form-field textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+
+.form-field input:focus-visible,
+.form-field textarea:focus-visible,
+.radio-group input:focus-visible,
+.checkbox-field input:focus-visible {
+    border-color: var(--gold-primary);
+}
+
+.form-field input[aria-invalid="true"],
+.form-field textarea[aria-invalid="true"] {
+    border-color: #ff8a8a;
+}
+
+.field-hint,
+.field-error {
+    margin-top: 0.35rem;
+    font-size: 0.9rem;
+}
+
+.field-hint {
+    color: var(--text-secondary);
+}
+
+.field-error {
+    min-height: 1.4em;
+    color: #ffb4b4;
+}
+
+.form-fieldset {
+    border: 0;
+    padding: 0;
+}
+
+.radio-group {
+    display: grid;
+    gap: 0.65rem;
+}
+
+.radio-group label,
+.checkbox-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.radio-group input,
+.checkbox-field input {
+    flex: 0 0 auto;
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-top: 0.2rem;
+    accent-color: var(--gold-primary);
+}
+
+.checkbox-field {
+    margin-bottom: 0.25rem;
+}
+
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.form-status {
+    min-height: 1.5rem;
+    margin-top: 1rem;
+    color: var(--gold-light);
+    font-weight: 700;
+}
+
+@media (max-width: 600px) {
+    .form-page {
+        padding-top: 6.5rem;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+    }
+}

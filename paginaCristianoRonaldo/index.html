@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sitio web tributo a Cristiano Ronaldo (CR7): biografía completa, trayectoria interactiva por clubes, estadísticas de leyenda y galería multimedia.">
+    <meta name="keywords" content="Cristiano Ronaldo, CR7, Fútbol, Real Madrid, Manchester United, Portugal, Estadísticas, Balón de Oro">
+    <meta name="author" content="Docente & Desarrollador Web Senior">
+    <title>Cristiano Ronaldo | Leyenda del Fútbol Mundial (CR7)</title>
+    
+    <!-- Tipografía Google Fonts: Outfit & Cinzel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Enlace directo para saltar navegación (Accesibilidad WCAG A1) -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <!-- Encabezado y Navegación Principal -->
+    <header class="header" id="header">
+        <div class="header-container">
+            <a href="#hero" class="logo" aria-label="Inicio - CR7 Legend">
+                <span class="logo-text">CR<span class="highlight">7</span></span>
+                <span class="logo-subtext">LEGEND</span>
+            </a>
+
+            <button class="nav-toggle" id="navToggle" aria-label="Abrir menú de navegación" aria-expanded="false" aria-controls="mainNav">
+                <span class="hamburger"></span>
+            </button>
+
+            <nav class="nav" id="mainNav" aria-label="Navegación principal">
+                <ul class="nav-list">
+                    <li><a href="#hero" class="nav-link active">Inicio</a></li>
+                    <li><a href="#biografia" class="nav-link">Biografía</a></li>
+                    <li><a href="#trayectoria" class="nav-link">Trayectoria</a></li>
+                    <li><a href="#estadisticas" class="nav-link">Estadísticas</a></li>
+                    <li><a href="#galeria" class="nav-link">Galería</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <!-- Sección Hero -->
+        <section id="hero" class="hero-section">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <div class="badge">El Rey del Gol</div>
+                <h1 class="hero-title">Cristiano <span class="gold-gradient">Ronaldo</span></h1>
+                <p class="hero-subtitle">Disciplina, ambición y talento absoluto. Explora la historia del máximo goleador en la historia del fútbol profesional.</p>
+                <div class="hero-actions">
+                    <a href="#trayectoria" class="btn btn-primary">Explorar Trayectoria</a>
+                    <a href="#estadisticas" class="btn btn-secondary">Ver Estadísticas</a>
+                </div>
+            </div>
+            <div class="scroll-indicator">
+                <a href="#biografia" aria-label="Desplazarse hacia abajo">
+                    <span class="mouse" aria-hidden="true">
+                        <span class="wheel" aria-hidden="true"></span>
+                    </span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Sección Biografía -->
+        <section id="biografia" class="section biografia-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Orígenes y Filosofía</span>
+                    <h2 class="section-title">Biografía del Comandante</h2>
+                    <div class="title-line"></div>
+                </div>
+
+                <div class="biografia-grid">
+                    <article class="biografia-card main-bio">
+                        <h3>De Funchal a la Cima del Mundo</h3>
+                        <p>Nacido el 5 de febrero de 1985 en Funchal, Madeira (Portugal), Cristiano Ronaldo dos Santos Aveiro demostró desde muy joven una pasión inquebrantable por el balón. Criado en un entorno humilde, su ética de trabajo y determinación lo llevaron a dejar su hogar a los 12 años para unirse a las categorías inferiores del Sporting CP en Lisboa.</p>
+                        <p>Su salto al profesionalismo fue meteórico. Su desborde, velocidad y potencia física llamaron de inmediato la atención del legendario entrenador Sir Alex Ferguson, marcando el inicio de una carrera repleta de récords imbatibles en los clubes más exigentes del planeta.</p>
+                        <blockquote class="quote">
+                            "Tu amor me hace fuerte, tu odio me hace imparable."
+                            <cite>— Cristiano Ronaldo</cite>
+                        </blockquote>
+                    </article>
+
+                    <div class="biografia-sidebar">
+                        <div class="info-card">
+                            <h3>Ficha Técnica</h3>
+                            <ul class="info-list">
+                                <li><strong>Nombre completo:</strong> Cristiano Ronaldo dos Santos Aveiro</li>
+                                <li><strong>Fecha de nacimiento:</strong> 5 de febrero de 1985</li>
+                                <li><strong>Lugar de nacimiento:</strong> Funchal, Madeira, Portugal</li>
+                                <li><strong>Posición:</strong> Delantero / Extremo</li>
+                                <li><strong>Dorsal icónico:</strong> 7</li>
+                                <li><strong>Apodos:</strong> CR7, El Bicho, El Comandante</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-card gold-border">
+                            <h3>Valores Clave</h3>
+                            <div class="pillars">
+                                <span class="pillar-tag">Disciplina Indomable</span>
+                                <span class="pillar-tag">Mentalidad Ganadora</span>
+                                <span class="pillar-tag">Liderazgo en Campo</span>
+                                <span class="pillar-tag">Perfeccionismo Físico</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Trayectoria Interactiva -->
+        <section id="trayectoria" class="section trayectoria-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Línea de Tiempo Interactiva</span>
+                    <h2 class="section-title">Trayectoria por Clubes y Selección</h2>
+                    <div class="title-line"></div>
+                    <p class="section-description">Haz clic en los filtros para explorar las distintas etapas doradas de su carrera.</p>
+                </div>
+
+                <!-- Filtros Interactivos JS con accesibilidad ARIA completa -->
+                <div class="timeline-filters" role="tablist" aria-label="Filtros de equipos">
+                    <button class="filter-btn active" data-filter="all" role="tab" aria-selected="true" aria-controls="timelineContainer">Todos</button>
+                    <button class="filter-btn" data-filter="sporting" role="tab" aria-selected="false" aria-controls="timelineContainer">Sporting CP</button>
+                    <button class="filter-btn" data-filter="manchester" role="tab" aria-selected="false" aria-controls="timelineContainer">Man. United</button>
+                    <button class="filter-btn" data-filter="realmadrid" role="tab" aria-selected="false" aria-controls="timelineContainer">Real Madrid</button>
+                    <button class="filter-btn" data-filter="juventus" role="tab" aria-selected="false" aria-controls="timelineContainer">Juventus</button>
+                    <button class="filter-btn" data-filter="alnassr" role="tab" aria-selected="false" aria-controls="timelineContainer">Al-Nassr</button>
+                    <button class="filter-btn" data-filter="portugal" role="tab" aria-selected="false" aria-controls="timelineContainer">Portugal</button>
+                </div>
+
+                <!-- Contenedor de Hitos -->
+                <div class="timeline" id="timelineContainer" role="tabpanel" aria-label="Línea de tiempo de la carrera de Cristiano Ronaldo">
+                    <div class="timeline-item" data-category="sporting">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <span class="timeline-date">2002 - 2003</span>
+                            <h3>Sporting CP: El Debut Profesional</h3>
+                            <p>Debutó en el primer equipo del Sporting de Portugal a los 17 años. En un amistoso inaugural ante el Manchester United en 2003, deslumbró a Sir Alex Ferguson, quien exigió su fichaje inmediato.</p>
+                            <span class="club-badge">Sporting CP</span>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item" data-category="manchester">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <span class="timeline-date">2003 - 2009</span>
+                            <h3>Manchester United: La Consagración de la Joven Perla</h3>
+                            <p>Bajo la guía de Ferguson, evolucionó de habilidoso extremo a goleador letal. Conquistó 3 Premier League, 1 UEFA Champions League y su primer Balón de Oro en 2008.</p>
+                            <span class="club-badge">Manchester United</span>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item" data-category="realmadrid">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <span class="timeline-date">2009 - 2018</span>
+                            <h3>Real Madrid: La Era de los Récords Imposibles</h3>
+                            <p>Presentado ante 85,000 aficionados en el Santiago Bernabéu. Anotó 450 goles en 438 partidos (máximo goleador histórico del club), ganando 4 UEFA Champions League y 4 Balones de Oro adicionales.</p>
+                            <span class="club-badge gold">Real Madrid</span>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item" data-category="juventus">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <span class="timeline-date">2018 - 2021</span>
+                            <h3>Juventus: Conquista de Italia</h3>
+                            <p>Llegó a Turín para dominar el Calcio. Conquistó 2 títulos de Serie A, 1 Coppa Italia y se convirtió en el jugador más rápido en alcanzar los 100 goles en la historia de la Juventus.</p>
+                            <span class="club-badge">Juventus FC</span>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item" data-category="portugal">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <span class="timeline-date">2003 - Presente</span>
+                            <h3>Selección de Portugal: Gloria Nacional</h3>
+                            <p>Capitán absoluto de la selección portuguesa. Lideró a su país a conquistar la Eurocopa 2016 y la UEFA Nations League 2019, convirtiéndose en el máximo goleador histórico de selecciones de fútbol.</p>
+                            <span class="club-badge flag">Portugal</span>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item" data-category="alnassr">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <span class="timeline-date">2023 - Presente</span>
+                            <h3>Al-Nassr: Pionero en Oriente Medio</h3>
+                            <p>Su llegada a Arabia Saudí impulsó el crecimiento global de la Saudi Pro League. Continuó registrando cifras goleadoras asombrosas y superando los 900 goles oficiales en su carrera.</p>
+                            <span class="club-badge">Al-Nassr</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Estadísticas con región aria-live -->
+        <section id="estadisticas" class="section estadisticas-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Números Históricos</span>
+                    <h2 class="section-title">Estadísticas de Leyenda</h2>
+                    <div class="title-line"></div>
+                </div>
+
+                <!-- Tarjetas de Contadores Animados JS -->
+                <div class="stats-grid" aria-live="polite">
+                    <div class="stat-card">
+                        <div class="stat-icon" aria-hidden="true">⚽</div>
+                        <div class="stat-number" data-target="900" role="status">0</div>
+                        <div class="stat-plus">+</div>
+                        <div class="stat-label">Goles Oficiales</div>
+                    </div>
+
+                    <div class="stat-card gold">
+                        <div class="stat-icon" aria-hidden="true">🏆</div>
+                        <div class="stat-number" data-target="5" role="status">0</div>
+                        <div class="stat-label">Balones de Oro</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" aria-hidden="true">⭐</div>
+                        <div class="stat-number" data-target="5" role="status">0</div>
+                        <div class="stat-label">UEFA Champions League</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" aria-hidden="true">👟</div>
+                        <div class="stat-number" data-target="4" role="status">0</div>
+                        <div class="stat-label">Botas de Oro</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" aria-hidden="true">🇵🇹</div>
+                        <div class="stat-number" data-target="212" role="status">0</div>
+                        <div class="stat-plus">+</div>
+                        <div class="stat-label">Partidos con Portugal</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Galería Multimedia -->
+        <section id="galeria" class="section galeria-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Momentos Icónicos</span>
+                    <h2 class="section-title">Galería de Imágenes</h2>
+                    <div class="title-line"></div>
+                    <p class="section-description">Haz clic en cualquier imagen para ampliarla en el visor interactivo.</p>
+                </div>
+
+                <div class="galeria-grid">
+                    <figure class="galeria-item">
+                        <img src="assets/images/cr7_real_madrid.jpg" alt="Cristiano Ronaldo vistiendo la camiseta blanca del Real Madrid celebrando un gol épico con su icónica pose" loading="lazy">
+                        <figcaption class="galeria-overlay">
+                            <h3>Celebración en el Real Madrid</h3>
+                            <p>Celebración histórica en la UEFA Champions League con el conjunto merengue.</p>
+                            <button class="view-btn" aria-label="Ver imagen ampliada de celebración en Real Madrid">Ampliar imagen</button>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="galeria-item">
+                        <img src="assets/images/cr7_manchester_united.jpg" alt="Cristiano Ronaldo con la camiseta roja del Manchester United perfilándose en su característica postura para ejecutar un tiro libre" loading="lazy">
+                        <figcaption class="galeria-overlay">
+                            <h3>Especialista de Tiro Libre</h3>
+                            <p>Su famosa postura de cobro de tiro libre con efecto Folha Seca en Old Trafford.</p>
+                            <button class="view-btn" aria-label="Ver imagen ampliada de tiro libre con Manchester United">Ampliar imagen</button>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="galeria-item">
+                        <img src="assets/images/cr7_portugal_captain.jpg" alt="Cristiano Ronaldo con la cinta de capitán de la selección de Portugal levantando un trofeo internacional con gran emoción" loading="lazy">
+                        <figcaption class="galeria-overlay">
+                            <h3>Capitán de Portugal</h3>
+                            <p>Liderando a la Selección de Portugal en la consecución de trofeos internacionales.</p>
+                            <button class="view-btn" aria-label="Ver imagen ampliada de capitán de Portugal">Ampliar imagen</button>
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal / Visor de Imagen Lightbox Accesible (WCAG C2 & ARIA) -->
+        <div id="imageModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalCaption" hidden>
+            <div class="modal-backdrop" id="modalBackdrop"></div>
+            <div class="modal-content">
+                <button class="modal-close" id="modalClose" aria-label="Cerrar visor de imagen">&times;</button>
+                <img id="modalImage" src="" alt="Previsualización de imagen ampliada de Cristiano Ronaldo">
+                <h3 id="modalTitle"></h3>
+                <p id="modalCaption"></p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Pie de Página Semántico -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-brand">
+                <span class="logo-text">CR<span class="highlight">7</span> LEGEND</span>
+                <p>Sitio web estático educativo sobre Cristiano Ronaldo creado con HTML5, CSS y JavaScript Vanilla.</p>
+            </div>
+
+            <div class="footer-links">
+                <h4>Navegación</h4>
+                <ul>
+                    <li><a href="#hero">Inicio</a></li>
+                    <li><a href="#biografia">Biografía</a></li>
+                    <li><a href="#trayectoria">Trayectoria</a></li>
+                    <li><a href="#estadisticas">Estadísticas</a></li>
+                    <li><a href="#galeria">Galería</a></li>
+                    <li><a href="observabilidad.html">Observabilidad Local 📊</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-external">
+                <h4>Enlaces Oficiales</h4>
+                <ul>
+                    <li><a href="https://www.cristianoronaldo.com" target="_blank" rel="noopener noreferrer">Sitio Oficial CR7 ↗<span class="sr-only"> (se abre en una nueva ventana)</span></a></li>
+                    <li><a href="https://www.uefa.com" target="_blank" rel="noopener noreferrer">Perfil Oficial en UEFA ↗<span class="sr-only"> (se abre en una nueva ventana)</span></a></li>
+                    <li><a href="https://www.fpf.pt" target="_blank" rel="noopener noreferrer">Federación Portuguesa ↗<span class="sr-only"> (se abre en una nueva ventana)</span></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2026 CR7 Tribute. Proyecto de desarrollo web estático educativo.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="observabilidad.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
